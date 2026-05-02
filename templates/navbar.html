@@ -1,23 +1,39 @@
 <div class="navbar-container">
   <div class="left">
     <a href="{% url 'home' %}">
-    <h1>Todo list</h1>
+      <h1>Todo list</h1>
     </a>
   </div>
 
-  <div class="right">
-    <a href="{% url 'login' %}">
-    <h1>Login</h1>
-    </a>
+  <div>
+    {% if user.is_authenticated %}
+      <form method="post" action="{% url 'logout' %}" style="display: inline;">
+        {% csrf_token %}
+        <button type="submit" class="nav-item text-light" style="border: none; background: none; cursor: pointer;">
+          Logout
+        </button>
+      </form>
+    {% else %}
+      <li style="list-style: none;">
+        <a href="{% url 'login' %}" style="color: white; text-decoration: none;">Login</a>
+      </li>
+    {% endif %}
   </div>
 </div>
-<hr>
 
 <style>
   .navbar-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background-color: rgb(32, 30, 30);
+    padding: 0 20px;
+    color: white;
+  }
+
+  .navbar-container a {
+    color: white;
+    text-decoration: none;
   }
 
   .left {

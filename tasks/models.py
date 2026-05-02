@@ -31,13 +31,12 @@ class Room(models.Model):
 
 class Task(models.Model):
     room = models.ForeignKey(
-        Room, on_delete=models.CASCADE, related_name="tasks", null=True
-    )
-    host = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+        Room, on_delete=models.CASCADE, related_name="tasks", null=True, blank=True)
+    host = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
-    description = models.TextField(max_length=500, blank=True)
-    time_created = models.TimeField(auto_now_add=True)
-    due_to_time = models.TimeField(null=True, blank=True)
+    description = models.TextField(blank=True)
+    time_created = models.DateTimeField(auto_now_add=True)
+    due_to_time = models.DateTimeField(null=True, blank=True)
     is_completed = models.BooleanField(default=False)
     PRIORITY_CHOICES = [
         ("L", "Low"),

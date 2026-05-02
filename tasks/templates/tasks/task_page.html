@@ -1,0 +1,42 @@
+{% extends 'main.html' %} {% block content %}
+  <h1>Тут будуть таски</h1>
+<div class="task-container">
+  <div>
+    <form action="{% url 'create_task' %}">
+      {% csrf_token %}
+      <button type="submit" class="btn btn_primary">Create task</button>
+    </form>
+  </div>
+  <div>
+    <h2>All Tasks</h2> 
+    <p>{{ task_count }} uncompleted task</p>
+    {% for task in tasks %}
+    {% if task.is_completed == False %}
+    <p>
+      <a href="{% url 'task' task.id %}">{{ task.name }}</a> <a href="{% url 'delete_task' task.id %}">Delete</a>
+      <p>Опис: {{task.description}}</p>
+      <p>Таска закінчена: {{task.is_completed}}</p>
+    </p>
+    {% empty %}
+    <p>No tasks found.</p>
+    {% endfor %}
+    {% else %}
+  </div>
+<div>
+  <h1>
+    Completed tasks
+  </h1>
+  <p>{{ task_count }} completed task</p>
+
+</div>
+{% endif %}
+</div>
+
+<style>
+  .task-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+</style>
+
+{% endblock content %}
