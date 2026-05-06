@@ -6,30 +6,43 @@
       {% csrf_token %}
       <button type="submit" class="btn btn_primary">Create task</button>
     </form>
+    <form class="header__search" method="GET", action="{% url 'task_page' %}">
+        <div class="search-bar">
+    <input name="q" value="{{ q|default:'' }}"placeholder="Search for task..."/>
+  </div>
+  </form>
   </div>
   <div>
     <h2>All Tasks</h2> 
     <p>{{ task_count }} uncompleted task</p>
     {% for task in tasks %}
-    {% if task.is_completed == False %}
+      {% if not task.is_completed %}
     <p>
       <a href="{% url 'task' task.id %}">{{ task.name }}</a> <a href="{% url 'delete_task' task.id %}">Delete</a>
       <p>Опис: {{task.description}}</p>
       <p>Таска закінчена: {{task.is_completed}}</p>
+      <p>Пріорітет: {{task.priority}}</p>
     </p>
+    <hr>
+      {% endif %}
     {% empty %}
     <p>No tasks found.</p>
     {% endfor %}
-    {% else %}
   </div>
 <div>
-  <h1>
-    Completed tasks
-  </h1>
-  <p>{{ task_count }} completed task</p>
-
+  <h2>Completed Tasks</h2>
+  <p>{{ c_task_count }} completed task</p>
+    {% for task in tasks %}
+      {% if task.is_completed %}
+         <p>
+      <a href="{% url 'task' task.id %}">{{ task.name }}</a> <a href="{% url 'delete_task' task.id %}">Delete</a>
+      <p>Опис: {{task.description}}</p>
+      <p>Таска закінчена: {{task.is_completed}}</p>
+    </p>
+    <hr>
+      {% endif %}
+    {% endfor %}
 </div>
-{% endif %}
 </div>
 
 <style>

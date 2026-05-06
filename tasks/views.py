@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
+from django.db.models import Q
 from django.contrib.auth.views import LoginView, LogoutView
 from django.views.generic.edit import FormView
 from .forms import RegistrationForm, TaskForm, TaskUpdateForm
@@ -16,12 +17,17 @@ def home(request):
 
 @login_required(login_url="login")
 def tasks(request):
-    all_tasks = Task.objects.all()
-    task_count = Task.objects.filter(is_completed=False).count()
+    q = request.GET.get("q", "").strip()
+    task_filter = Task.objects.filter(
+        Q(name__icontains=q) | Q(description__icontains=q)
+    )
+    uncompleted_task_count = Task.objects.filter(is_completed=False).count()
+    completed_task_count = Task.objects.filter(is_completed=True).count()
     context = {
-        "tasks": all_tasks,
-        "task_count": task_count
-               }
+        "tasks": task_filter,
+        "task_count": uncompleted_task_count,
+        "c_task_count": completed_task_count,
+    }
     return render(request, "tasks/task_page.html", context)
 
 
@@ -49,16 +55,13 @@ def update_task(request, pk):
     task = Task.objects.get(id=pk)
 
     if request.method == "POST":
-       form = TaskUpdateForm(request.POST, instance=task)
-       if form.is_valid():
-           form.save()
-           return redirect('task_page')
+        form = TaskUpdateForm(request.POST, instance=task)
+        if form.is_valid():
+            form.save()
+            return redirect("task_page")
     else:
-        form = TaskUpdateForm(instance=task) 
-    context = {
-        "tasks": task,
-        'form': form
-    }
+        form = TaskUpdateForm(instance=task)
+    context = {"tasks": task, "form": form}
     return render(request, "tasks/update_task.html", context)
 
 
@@ -75,7 +78,7 @@ class Logout(LogoutView):
 class RegisterUser(FormView):
     template_name = "tasks/register.html"
     form_class = RegistrationForm
-    success_url = "task_page"
+    success_url = reverse_lazy("task_page")
 
     def form_valid(self, form):
         user = form.save()
