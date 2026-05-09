@@ -1,54 +1,82 @@
-{% extends 'main.html' %} {% block content %}
-  <h1>Тут будуть таски</h1>
+{% extends 'main.html' %} 
+{% block content %}
+<h1>Тут будуть таски</h1>
+
 <div class="task-container">
   <div>
     <form action="{% url 'create_task' %}">
       {% csrf_token %}
       <button type="submit" class="btn btn_primary">Create task</button>
     </form>
-    <form class="header__search" method="GET", action="{% url 'task_page' %}">
-        <div class="search-bar">
-    <input name="q" value="{{ q|default:'' }}"placeholder="Search for task..."/>
+
+    <br>
+
+    <form method="GET" action="{% url 'task_page' %}" class="header__search">
+      <div class="search-bar">
+        <input
+          name="q"
+          value="{{ request.GET.q|default:'' }}"
+          placeholder="Search for task..."
+        />
+        <button type="submit">Search</button>
+      </div>
+
+      <br>
+
+      <label class="switch">
+        <input
+          type="checkbox"
+          name="hide_completed"
+          {% if hide_completed %}checked{% endif %}
+          onchange="this.form.submit()"
+        />
+        <span class="slider">Hide completed task</span>
+      </label>
+    </form>
   </div>
-  </form>
-  </div>
+
   <div>
-    <h2>All Tasks</h2> 
+    <h2>All Tasks</h2>
     <p>{{ task_count }} uncompleted task</p>
-    {% for task in tasks %}
+    {% for task in tasks %} 
       {% if not task.is_completed %}
-    <p>
-      <a href="{% url 'task' task.id %}">{{ task.name }}</a> <a href="{% url 'delete_task' task.id %}">Delete</a>
-      <p>Опис: {{task.description}}</p>
-      <p>Таска закінчена: {{task.is_completed}}</p>
-      <p>Пріорітет: {{task.priority}}</p>
-    </p>
-    <hr>
-      {% endif %}
+        <a href="{% url 'task' task.id %}">{{ task.name }}</a>
+        <a href="{% url 'delete_task' task.id %}">Delete</a>
+        <p>Опис: {{task.description}}</p>
+        <p>Таска закінчена: {{task.is_completed}}</p>
+        <p>Пріорітет: {{task.priority}}</p>
+        <hr />
+      {% endif %} 
     {% empty %}
-    <p>No tasks found.</p>
+      <p>No tasks found.</p>
     {% endfor %}
   </div>
-<div>
-  <h2>Completed Tasks</h2>
-  <p>{{ c_task_count }} completed task</p>
-    {% for task in tasks %}
+
+  {% if not hide_completed %}
+  <div>
+    <h2>Completed Tasks</h2>
+    <p>{{ c_task_count }} completed task</p>
+    {% for task in tasks %} 
       {% if task.is_completed %}
-         <p>
-      <a href="{% url 'task' task.id %}">{{ task.name }}</a> <a href="{% url 'delete_task' task.id %}">Delete</a>
-      <p>Опис: {{task.description}}</p>
-      <p>Таска закінчена: {{task.is_completed}}</p>
-    </p>
-    <hr>
-      {% endif %}
+        <a href="{% url 'task' task.id %}">{{ task.name }}</a>
+        <a href="{% url 'delete_task' task.id %}">Delete</a>
+        <p>Опис: {{task.description}}</p>
+        <p>Таска закінчена: {{task.is_completed}}</p>
+        <hr />
+      {% endif %} 
     {% endfor %}
-</div>
+  </div>
+  {% endif %}
 </div>
 
 <style>
   .task-container {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+  }
+  .search-bar {
+    margin-bottom: 10px;
   }
 </style>
 

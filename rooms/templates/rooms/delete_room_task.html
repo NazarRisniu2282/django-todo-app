@@ -1,0 +1,6 @@
+<p>{{task.name}}</p>
+<form method="POST">
+    {% csrf_token %}
+    <button type="submit">Delete</button><br>
+    <a href="{% url 'room' task.room.id %}">Return</a>
+</form>

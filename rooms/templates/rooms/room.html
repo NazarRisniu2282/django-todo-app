@@ -1,0 +1,30 @@
+{% extends 'rooms_main.html' %}
+
+{% block content %}
+
+<li><strong>Name:</strong> {{ room.name }}</li>
+<li><strong>Description:</strong> {{ room.description }}</li>
+
+<a href="{% url 'room_create_task' room.id %}" class="btn">Create task</a>
+
+<div>
+    <h2>All Tasks</h2>
+    <p>{{ task_count }} uncompleted task</p>
+    {% for task in tasks %} 
+      {% if not task.is_completed %}
+        <a href="{% url 'room_task' task.id %}">{{ task.name }}</a>
+        <a href="{% url 'room_delete_task' task.id %}">Delete</a>
+        <p>Опис: {{task.description}}</p>
+        <p>Таска закінчена: {{task.is_completed}}</p>
+        <p>Пріорітет: {{task.priority}}</p>
+        <hr />
+      {% endif %} 
+    {% empty %}
+      <p>No tasks found.</p>
+    {% endfor %}
+  </div>
+
+<a href="{% url 'update_room' room.id %}">Update</a>
+<a href="{% url 'rooms_home' %}"> Return </a>
+
+{% endblock content %}

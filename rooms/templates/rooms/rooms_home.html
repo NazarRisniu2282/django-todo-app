@@ -1,0 +1,22 @@
+{% extends 'rooms_main.html' %}
+
+{% block content %}
+<h1>Rooms</h1>
+<form action="{% url 'create_room' %}" method="POST"> 
+    {% csrf_token %}
+    <button type="submit">Create room</button>
+</form>
+
+<div>
+    {% for room in rooms %}
+    <div>
+        <a href="{% url 'room' room.id %}">
+            <p>Ім'я: {{room.name}}</p>
+        </a>
+        <p>Опис: {{room.description}}</p>
+        <a href="{% url 'delete_room' room.id %}">delete</a>
+        <hr>
+    </div>
+    {% endfor %}
+</div>
+{% endblock content %}

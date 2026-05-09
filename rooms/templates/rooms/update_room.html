@@ -1,0 +1,8 @@
+{{room.name}}
+
+<form method="POST">
+    {% csrf_token %}
+    {{form.as_p}}
+    <button type="submit">Зберегти зміни</button>
+    <a href="{% url 'rooms_home' %}">Скасувати</a>
+</form>

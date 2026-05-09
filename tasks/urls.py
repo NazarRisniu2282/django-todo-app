@@ -1,6 +1,8 @@
 from django.urls import path
 from . import views
+from django.urls import include
 from .views import Login, RegisterUser, Logout
+
 
 urlpatterns = [
     path("", views.home, name="home"),
@@ -13,3 +15,4 @@ urlpatterns = [
     path("delete_task/<str:pk>", views.delete_task, name='delete_task'),
     path("update_task/<str:pk>", views.update_task, name='update_task')
 ]
+

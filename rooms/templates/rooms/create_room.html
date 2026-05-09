@@ -1,0 +1,11 @@
+{% extends 'rooms_main.html' %} {% block content %}
+
+<form method="POST">
+    {% csrf_token %}
+    {{form.as_p}}
+  <button type="submit">Submit</button>
+  <a href="{% url 'rooms_home' %}">Return</a>
+</form>
+
+
+{% endblock content %}

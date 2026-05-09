@@ -1,0 +1,15 @@
+{% extends 'main.html' %} {% block content %}
+<div>
+  <li><strong>Name:</strong> {{ task.name }}</li>
+  <li><strong>Description:</strong> {{ task.description }}</li>
+  <li><strong>Status:</strong> {{ task.is_completed }}</li>
+  <li><strong>Created At:</strong> {{ task.time_created }}</li>
+  <li><strong>Priority:</strong> {{ task.priority }}</li>
+  <li><strong>Due_to:</strong> {{ task.due_to_time }}</li>
+</div>
+
+
+<a href="{% url 'room_update_task' task.id %}">Update</a>
+<a href="{% url 'room' task.room.id %}"> Назад</a>
+
+{% endblock content %}

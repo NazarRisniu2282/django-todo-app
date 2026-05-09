@@ -49,6 +49,28 @@ class Task(models.Model):
 
     def __str__(self):
         return self.name
+    
+
+class RoomTask(models.Model):
+    room = models.ForeignKey(
+        Room, on_delete=models.CASCADE, related_name="room_tasks", null=True, blank=True)
+    host = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+    time_created = models.DateTimeField(auto_now_add=True)
+    due_to_time = models.DateTimeField(null=True, blank=True)
+    is_completed = models.BooleanField(default=False)
+    PRIORITY_CHOICES = [
+        ("L", "Low"),
+        ("M", "Medium"),
+        ("H", "High"),
+    ]
+    priority = models.CharField(
+        max_length=1, choices=PRIORITY_CHOICES, default="M"
+        )
+
+    def __str__(self):
+        return self.name
 
 
 class Messages(models.Model):

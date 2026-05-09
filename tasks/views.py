@@ -21,12 +21,19 @@ def tasks(request):
     task_filter = Task.objects.filter(
         Q(name__icontains=q) | Q(description__icontains=q)
     )
+
     uncompleted_task_count = Task.objects.filter(is_completed=False).count()
     completed_task_count = Task.objects.filter(is_completed=True).count()
+    hide_completed = request.GET.get("hide_completed") == "on"
+
+    if hide_completed:
+        task_filter = task_filter.exclude(is_completed=True)
+
     context = {
         "tasks": task_filter,
         "task_count": uncompleted_task_count,
         "c_task_count": completed_task_count,
+        "hide_completed": hide_completed,
     }
     return render(request, "tasks/task_page.html", context)
 
