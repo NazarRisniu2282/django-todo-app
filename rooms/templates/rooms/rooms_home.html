@@ -1,22 +1,33 @@
 {% extends 'rooms_main.html' %}
 
 {% block content %}
-<h1>Rooms</h1>
-<form action="{% url 'create_room' %}" method="POST"> 
-    {% csrf_token %}
-    <button type="submit">Create room</button>
-</form>
-
-<div>
-    {% for room in rooms %}
+<div class="panel">
+  <div class="panel-header">
     <div>
-        <a href="{% url 'room' room.id %}">
-            <p>Ім'я: {{room.name}}</p>
-        </a>
-        <p>Опис: {{room.description}}</p>
-        <a href="{% url 'delete_room' room.id %}">delete</a>
-        <hr>
+      <h1 class="panel-title">Rooms</h1>
+      <p class="panel-subtitle">Manage your rooms and create new collaborative spaces.</p>
     </div>
+    <div class="panel-actions">
+      <form action="{% url 'create_room' %}" method="POST">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Create room</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="rooms-grid">
+    {% for room in rooms %}
+    <article class="room-card">
+      <div>
+        <a href="{% url 'room' room.id %}"><h2>{{ room.name }}</h2></a>
+        <p>{{ room.description }}</p>
+      </div>
+      <div class="room-actions">
+        <a href="{% url 'room' room.id %}" class="btn btn-secondary">Open</a>
+        <a href="{% url 'delete_room' room.id %}" class="btn btn-outline">Delete</a>
+      </div>
+    </article>
     {% endfor %}
+  </div>
 </div>
 {% endblock content %}

@@ -1,55 +1,23 @@
 <div class="navbar-container">
-  <div class="left">
-    <a href="{% url 'rooms_home' %}">
-      <h1>Todo list</h1>
+  <div class="navbar-left">
+    <a href="{% url 'rooms_home' %}" class="brand">
+      <span class="brand-mark">✓</span>
+      <span class="brand-name">Todo list</span>
     </a>
   </div>
 
-    <div>
-    <a href="{% url 'task_page' %}">
-    <h2>Your tasks</h2>
-    </a>
+  <div class="navbar-links">
+    <a href="{% url 'task_page' %}" class="nav-link">Your tasks</a>
   </div>
 
-  <div>
+  <div class="navbar-actions">
     {% if user.is_authenticated %}
-    <form method="post" action="{% url 'logout' %}" style="display: inline">
+    <form method="post" action="{% url 'logout' %}" class="logout-form">
       {% csrf_token %}
-      <button
-        type="submit"
-        class="nav-item text-light"
-        style="border: none; background: none; cursor: pointer"
-      >
-        Logout
-      </button>
+      <button type="submit" class="nav-button">Logout</button>
     </form>
     {% else %}
-    <li style="list-style: none">
-      <a href="{% url 'login' %}" style="color: white; text-decoration: none"
-        >Login</a
-      >
-    </li>
+    <a href="{% url 'login' %}" class="nav-link">Login</a>
     {% endif %}
   </div>
 </div>
-
-<style>
-  .navbar-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: rgb(32, 30, 30);
-    padding: 0 20px;
-    color: white;
-  }
-
-  .navbar-container a {
-    color: white;
-    text-decoration: none;
-  }
-
-  .left {
-    display: flex;
-    gap: 20px;
-  }
-</style>

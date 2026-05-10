@@ -12,4 +12,5 @@ urlpatterns = [
     path("delete_task/<str:pk>/", views.delete_task, name="room_delete_task"),
     path("room_task/<str:pk>/", views.task, name="room_task"),
     path("update_task/<str:pk>/", views.update_task, name="room_update_task"),
+    path("participants/<str:pk>", views.participants, name="participants"),
 ]

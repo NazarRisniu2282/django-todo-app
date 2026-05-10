@@ -1,30 +1,55 @@
 {% extends 'rooms_main.html' %}
 
 {% block content %}
-
-<li><strong>Name:</strong> {{ room.name }}</li>
-<li><strong>Description:</strong> {{ room.description }}</li>
-
-<a href="{% url 'room_create_task' room.id %}" class="btn">Create task</a>
-
-<div>
-    <h2>All Tasks</h2>
-    <p>{{ task_count }} uncompleted task</p>
-    {% for task in tasks %} 
-      {% if not task.is_completed %}
-        <a href="{% url 'room_task' task.id %}">{{ task.name }}</a>
-        <a href="{% url 'room_delete_task' task.id %}">Delete</a>
-        <p>Опис: {{task.description}}</p>
-        <p>Таска закінчена: {{task.is_completed}}</p>
-        <p>Пріорітет: {{task.priority}}</p>
-        <hr />
-      {% endif %} 
-    {% empty %}
-      <p>No tasks found.</p>
-    {% endfor %}
+<div class="panel">
+  <div class="panel-header">
+    <div>
+      <h1 class="panel-title">{{ room.name }}</h1>
+      <p class="panel-subtitle">{{ room.description }}</p>
+    </div>
+    <div class="panel-actions">
+      <a href="{% url 'room_create_task' room.id %}" class="btn btn-primary">Create task</a>
+      <a href="{% url 'update_room' room.id %}" class="btn btn-secondary">Update</a>
+      <a href="{% url 'rooms_home' %}" class="btn btn-outline">Return</a>
+    </div>
   </div>
 
-<a href="{% url 'update_room' room.id %}">Update</a>
-<a href="{% url 'rooms_home' %}"> Return </a>
+  <section class="panel">
+    <div class="panel-header">
+      <div>
+        <h2 class="panel-title">All Tasks</h2>
+        <p class="panel-subtitle">{{ task_count }} uncompleted task</p>
+      </div>
+    </div>
 
+    <div class="task-list">
+      {% for task in tasks %}
+        {% if not task.is_completed %}
+          <article class="task-card">
+            <div class="list-item">
+              <a href="{% url 'room_task' task.id %}">{{ task.name }}</a>
+              <div class="card-actions">
+                <a href="{% url 'room_delete_task' task.id %}" class="btn btn-outline">Delete</a>
+              </div>
+            </div>
+            <p>Description: {{ task.description }}</p>
+            <p>Priority: {{ task.priority }}</p>
+          </article>
+        {% endif %}
+      {% empty %}
+        <p>No tasks found.</p>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-header">
+      <div>
+        <h2 class="panel-title">Participants</h2>
+        <p class="panel-subtitle">{{ room.participants.all.count }} people in this room.</p>
+      </div>
+      <a href="{% url 'participants' room.id %}" class="btn btn-secondary">View</a>
+    </div>
+  </section>
+</div>
 {% endblock content %}

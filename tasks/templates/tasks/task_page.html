@@ -1,83 +1,98 @@
-{% extends 'main.html' %} 
-{% block content %}
-<h1>Тут будуть таски</h1>
+{% extends 'main.html' %} {% block content %}
+<div class="panel">
+  <div class="panel-header">
+    <div>
+      <h1 class="panel-title">Мої завдання</h1>
+      <p class="panel-subtitle">
+        Швидко керуй своїми задачами та знаходь потрібні.
+      </p>
+    </div>
+    <div class="panel-actions">
+      <form action="{% url 'create_task' %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Create task</button>
+      </form>
+    </div>
+  </div>
 
-<div class="task-container">
-  <div>
-    <form action="{% url 'create_task' %}">
-      {% csrf_token %}
-      <button type="submit" class="btn btn_primary">Create task</button>
-    </form>
+  <div class="page-grid">
+    <section class="panel">
+      <h2 class="panel-title">Пошук та фільтри</h2>
+      <form method="GET" action="{% url 'task_page' %}" class="header__search">
+        <div class="search-bar">
+          <input
+            name="q"
+            value="{{ request.GET.q|default:'' }}"
+            placeholder="Search for task..."
+          />
+          <button type="submit" class="btn btn-secondary">Search</button>
+        </div>
 
-    <br>
+        <label class="switch">
+          <input
+            type="checkbox"
+            name="hide_completed"
+            {%
+            if
+            hide_completed
+            %}checked{%
+            endif
+            %}
+            onchange="this.form.submit()"
+          />
+          <span class="slider">Hide completed task</span>
+        </label>
+      </form>
+    </section>
 
-    <form method="GET" action="{% url 'task_page' %}" class="header__search">
-      <div class="search-bar">
-        <input
-          name="q"
-          value="{{ request.GET.q|default:'' }}"
-          placeholder="Search for task..."
-        />
-        <button type="submit">Search</button>
+    <section class="panel task-list">
+      <div class="panel-header">
+        <div>
+          <h2 class="panel-title">All Tasks</h2>
+          <p class="panel-subtitle">{{ task_count }} uncompleted task</p>
+        </div>
       </div>
 
-      <br>
-
-      <label class="switch">
-        <input
-          type="checkbox"
-          name="hide_completed"
-          {% if hide_completed %}checked{% endif %}
-          onchange="this.form.submit()"
-        />
-        <span class="slider">Hide completed task</span>
-      </label>
-    </form>
-  </div>
-
-  <div>
-    <h2>All Tasks</h2>
-    <p>{{ task_count }} uncompleted task</p>
-    {% for task in tasks %} 
-      {% if not task.is_completed %}
-        <a href="{% url 'task' task.id %}">{{ task.name }}</a>
-        <a href="{% url 'delete_task' task.id %}">Delete</a>
-        <p>Опис: {{task.description}}</p>
-        <p>Таска закінчена: {{task.is_completed}}</p>
-        <p>Пріорітет: {{task.priority}}</p>
-        <hr />
-      {% endif %} 
-    {% empty %}
+      {% for task in tasks %} {% if not task.is_completed %}
+      <article class="task-card">
+        <div class="list-item">
+          <a href="{% url 'task' task.id %}">{{ task.name }}</a>
+          <div class="card-actions">
+            <a href="{% url 'delete_task' task.id %}" class="btn btn-outline"
+              >Delete</a
+            >
+          </div>
+        </div>
+        <p>Опис: {{ task.description }}</p>
+        <p>Пріорітет: {{ task.priority }}</p>
+      </article>
+      {% endif %} {% empty %}
       <p>No tasks found.</p>
-    {% endfor %}
-  </div>
+      {% endfor %} {% if not hide_completed %}
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Completed Tasks</h2>
+            <p class="panel-subtitle">{{ c_task_count }} completed task</p>
+          </div>
+        </div>
 
-  {% if not hide_completed %}
-  <div>
-    <h2>Completed Tasks</h2>
-    <p>{{ c_task_count }} completed task</p>
-    {% for task in tasks %} 
-      {% if task.is_completed %}
-        <a href="{% url 'task' task.id %}">{{ task.name }}</a>
-        <a href="{% url 'delete_task' task.id %}">Delete</a>
-        <p>Опис: {{task.description}}</p>
-        <p>Таска закінчена: {{task.is_completed}}</p>
-        <hr />
-      {% endif %} 
-    {% endfor %}
+        {% for task in tasks %} {% if task.is_completed %}
+        <article class="task-card">
+          <div class="list-item">
+            <a href="{% url 'task' task.id %}">{{ task.name }}</a>
+            <div class="card-actions">
+              <a href="{% url 'delete_task' task.id %}" class="btn btn-outline"
+                >Delete</a
+              >
+            </div>
+          </div>
+          <p>Опис: {{ task.description }}</p>
+        </article>
+        {% endif %} {% endfor %}
+      </section>
+      {% endif %}
+    </section>
   </div>
-  {% endif %}
 </div>
-
-<style>
-  .task-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-  }
-  .search-bar {
-    margin-bottom: 10px;
-  }
-</style>
-
 {% endblock content %}

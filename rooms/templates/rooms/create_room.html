@@ -1,11 +1,15 @@
-{% extends 'rooms_main.html' %} {% block content %}
+{% extends 'rooms_main.html' %}
 
-<form method="POST">
+{% block content %}
+<section class="form-card">
+  <h1 class="panel-title">Create room</h1>
+  <p class="panel-subtitle">Add a new room for shared tasks.</p>
+
+  <form method="POST">
     {% csrf_token %}
-    {{form.as_p}}
-  <button type="submit">Submit</button>
-  <a href="{% url 'rooms_home' %}">Return</a>
-</form>
-
-
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Submit</button>
+    <a href="{% url 'rooms_home' %}" class="btn btn-secondary">Return</a>
+  </form>
+</section>
 {% endblock content %}

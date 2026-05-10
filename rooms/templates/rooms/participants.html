@@ -1,0 +1,20 @@
+{% extends 'rooms_main.html' %} {% block content %}
+<section class="panel">
+  <div class="panel-header">
+    <div>
+      <h1 class="panel-title">Participants</h1>
+      <p class="panel-subtitle">People who can access this room.</p>
+    </div>
+  </div>
+
+  <div class="task-list">
+    {% for participant in participants %}
+    <article class="task-card">
+      <p>{{ participant.username }}</p>
+    </article>
+    {% empty %}
+    <p>No participants yet.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock content %}

@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import RoomForm, RoomTaskForm, RoomTaskUpdateForm
+from .forms import RoomForm, RoomTaskForm, RoomTaskUpdateForm, RoomPasword
 from tasks.models import Room, RoomTask
 
 
@@ -10,14 +10,36 @@ def rooms_home(request):
 
 
 def room(request, pk):
-    room = Room.objects.get(id=pk)
+    room = get_object_or_404(Room, id=pk)
+    
+    if room.password:
+        session_key = f'room_auth_{room.id}'
+        
+        if not request.session.get(session_key):
+            if request.method == "POST" and "room_password" in request.POST:
+                entered_password = request.POST.get('room_password')
+                if entered_password == room.password:
+                    request.session[session_key] = True
+                    return redirect('room', pk=room.id)
+                else:
+                    return render(request, 'rooms/room_password.html', {
+                        "room": room, 
+                        "error": "Невірний пароль!"
+                    })
+            
+            return render(request, 'rooms/room_password.html', {"room": room})
+
     tasks = RoomTask.objects.filter(room=room)
+    participants = room.participants.all()
     context = {
         "room": room,
         "tasks": tasks,
-        "task_count": tasks.filter(is_completed=False).count()
-               }
+        "task_count": tasks.filter(is_completed=False).count(),
+        "participants": participants,
+    }
     return render(request, "rooms/room.html", context)
+
+
 
 
 def deleteroom(request, pk):
@@ -70,11 +92,19 @@ def create_task(request, pk):
             task.room = room
             task.host = request.user
             task.save()
+            room.participants.add(request.user)
             return redirect("room", pk=room.id)
     else:
         form = RoomTaskForm()
 
     return render(request, "rooms/room_create_task.html", {"form": form})
+
+def participants(request, pk):
+    room = get_object_or_404(Room, id=pk)
+    participants = room.participants.all()
+
+    return render(request, 'rooms/participants.html', {"participants":participants})
+
 
 
 def update_task(request, pk):

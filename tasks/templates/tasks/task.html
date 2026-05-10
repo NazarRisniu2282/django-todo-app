@@ -1,15 +1,27 @@
 {% extends 'main.html' %} {% block content %}
-<div>
-  <li><strong>Name:</strong> {{ task.name }}</li>
-  <li><strong>Description:</strong> {{ task.description }}</li>
-  <li><strong>Status:</strong> {{ task.is_completed }}</li>
-  <li><strong>Created At:</strong> {{ task.time_created }}</li>
-  <li><strong>Priority:</strong> {{ task.priority }}</li>
-  <li><strong>Due_to:</strong> {{ task.due_to_time }}</li>
-</div>
+<section class="panel">
+  <div class="panel-header">
+    <div>
+      <h1 class="panel-title">{{ task.name }}</h1>
+      <p class="panel-subtitle">Details for this task.</p>
+    </div>
+    <div class="panel-actions">
+      <a href="{% url 'update_task' task.id %}" class="btn btn-primary"
+        >Update</a
+      >
+      <a href="{% url 'task_page' %}" class="btn btn-secondary">Back</a>
+    </div>
+  </div>
 
-
-<a href="{% url 'update_task' task.id %}">Update</a>
-<a href="{% url 'task_page' %}"> Назад</a>
-
+  <div class="task-card">
+    <div class="list-item">
+      <p><strong>Name:</strong> {{ task.name }}</p>
+      <p><strong>Description:</strong> {{ task.description }}</p>
+      <p><strong>Status:</strong> {{ task.is_completed }}</p>
+      <p><strong>Created At:</strong> {{ task.time_created }}</p>
+      <p><strong>Priority:</strong> {{ task.priority }}</p>
+      <p><strong>Due to:</strong> {{ task.due_to_time }}</p>
+    </div>
+  </div>
+</section>
 {% endblock content %}

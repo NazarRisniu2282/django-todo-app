@@ -37,3 +37,7 @@ class RoomTaskUpdateForm(forms.ModelForm):
                 }
             ),
         }
+
+
+class RoomPasword(forms.Form):
+    password = forms.CharField(widget=forms.PasswordInput, label="Введіть пароль від кімнати")
