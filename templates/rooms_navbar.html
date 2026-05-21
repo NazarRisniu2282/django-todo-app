@@ -7,7 +7,7 @@
   </div>
 
   <div class="navbar-links">
-    <a href="{% url 'task_page' %}" class="nav-link">Your tasks</a>
+    <a href="{% url 'task_page' %}" class="nav-link">Go to Your tasks</a>
   </div>
 
   <div class="navbar-actions">
@@ -15,7 +15,7 @@
     <form method="post" action="{% url 'logout' %}" class="logout-form">
       {% csrf_token %}
       <button type="submit" class="nav-button">Logout</button>
-    </form>
+    </form> 
     {% else %}
     <a href="{% url 'login' %}" class="nav-link">Login</a>
     {% endif %}

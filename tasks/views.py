@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.db.models import Q
 from django.contrib.auth.views import LoginView, LogoutView
@@ -18,12 +18,15 @@ def home(request):
 @login_required(login_url="login")
 def tasks(request):
     q = request.GET.get("q", "").strip()
-    task_filter = Task.objects.filter(
-        Q(name__icontains=q) | Q(description__icontains=q)
-    )
+    task_filter = Task.objects.filter(host=request.user)
 
-    uncompleted_task_count = Task.objects.filter(is_completed=False).count()
-    completed_task_count = Task.objects.filter(is_completed=True).count()
+    if q:
+        task_filter = task_filter.filter(
+            Q(name__icontains=q) | Q(description__icontains=q)
+        )
+
+    uncompleted_task_count = task_filter.filter(is_completed=False).count()
+    completed_task_count = task_filter.filter(is_completed=True).count()
     hide_completed = request.GET.get("hide_completed") == "on"
 
     if hide_completed:
@@ -38,16 +41,18 @@ def tasks(request):
     return render(request, "tasks/task_page.html", context)
 
 
+@login_required(login_url="login")
 def task(request, pk):
-    task = Task.objects.get(id=pk)
+    task = get_object_or_404(Task, id=pk, host=request.user)
     context = {
         "task": task,
     }
     return render(request, "tasks/task.html", context)
 
 
+@login_required(login_url="login")
 def delete_task(request, pk):
-    task = Task.objects.get(id=pk)
+    task = get_object_or_404(Task, id=pk, host=request.user)
 
     if request.method == "POST":
         task.delete()
@@ -58,8 +63,9 @@ def delete_task(request, pk):
     return render(request, "tasks/delete_task.html", context)
 
 
+@login_required(login_url="login")
 def update_task(request, pk):
-    task = Task.objects.get(id=pk)
+    task = get_object_or_404(Task, id=pk, host=request.user)
 
     if request.method == "POST":
         form = TaskUpdateForm(request.POST, instance=task)

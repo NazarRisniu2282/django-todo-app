@@ -1,33 +1,37 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import RoomForm, RoomTaskForm, RoomTaskUpdateForm, RoomPasword
 from tasks.models import Room, RoomTask
+from django.contrib.auth.decorators import login_required
 
 
+@login_required(login_url="login")
 def rooms_home(request):
     rooms = Room.objects.all()
     context = {"rooms": rooms}
     return render(request, "rooms/rooms_home.html", context)
 
 
+@login_required(login_url="login")
 def room(request, pk):
     room = get_object_or_404(Room, id=pk)
-    
+
     if room.password:
-        session_key = f'room_auth_{room.id}'
-        
+        session_key = f"room_auth_{room.id}"
+
         if not request.session.get(session_key):
             if request.method == "POST" and "room_password" in request.POST:
-                entered_password = request.POST.get('room_password')
+                entered_password = request.POST.get("room_password")
                 if entered_password == room.password:
                     request.session[session_key] = True
-                    return redirect('room', pk=room.id)
+                    return redirect("room", pk=room.id)
                 else:
-                    return render(request, 'rooms/room_password.html', {
-                        "room": room, 
-                        "error": "Невірний пароль!"
-                    })
-            
-            return render(request, 'rooms/room_password.html', {"room": room})
+                    return render(
+                        request,
+                        "rooms/room_password.html",
+                        {"room": room, "error": "Невірний пароль!"},
+                    )
+
+            return render(request, "rooms/room_password.html", {"room": room})
 
     tasks = RoomTask.objects.filter(room=room)
     participants = room.participants.all()
@@ -40,8 +44,7 @@ def room(request, pk):
     return render(request, "rooms/room.html", context)
 
 
-
-
+@login_required(login_url="login")
 def deleteroom(request, pk):
     room = Room.objects.get(id=pk)
 
@@ -53,6 +56,7 @@ def deleteroom(request, pk):
     return render(request, "rooms/delete_room.html", context)
 
 
+@login_required(login_url="login")
 def updateroom(request, pk):
     room = Room.objects.get(id=pk)
 
@@ -67,6 +71,7 @@ def updateroom(request, pk):
     return render(request, "rooms/update_room.html", context)
 
 
+@login_required(login_url="login")
 def createroom(request):
     if request.method == "POST":
         form = RoomForm(request.POST)
@@ -81,6 +86,7 @@ def createroom(request):
     return render(request, "rooms/create_room.html", {"form": form})
 
 
+@login_required(login_url="login")
 def create_task(request, pk):
     room = Room.objects.get(id=pk)
     form = RoomTaskForm()
@@ -99,14 +105,16 @@ def create_task(request, pk):
 
     return render(request, "rooms/room_create_task.html", {"form": form})
 
+
+@login_required(login_url="login")
 def participants(request, pk):
     room = get_object_or_404(Room, id=pk)
     participants = room.participants.all()
 
-    return render(request, 'rooms/participants.html', {"participants":participants})
+    return render(request, "rooms/participants.html", {"participants": participants})
 
 
-
+@login_required(login_url="login")
 def update_task(request, pk):
     task = get_object_or_404(RoomTask, id=pk)
 
@@ -114,13 +122,15 @@ def update_task(request, pk):
         form = RoomTaskUpdateForm(request.POST, instance=task)
         if form.is_valid():
             form.save()
-            return redirect("room_task", pk=task.id) 
+            return redirect("room_task", pk=task.id)
     else:
         form = RoomTaskUpdateForm(instance=task)
-    
+
     context = {"task": task, "form": form}
     return render(request, "rooms/room_task_update.html", context)
 
+
+@login_required(login_url="login")
 def delete_task(request, pk):
     task = get_object_or_404(RoomTask, id=pk)
     room_id = task.room.id
@@ -128,14 +138,15 @@ def delete_task(request, pk):
     if request.method == "POST":
         task.delete()
         return redirect("room", pk=room_id)
-    
+
     return render(request, "rooms/delete_room_task.html", {"task": task})
 
+
+@login_required(login_url="login")
 def task(request, pk):
-    task = get_object_or_404(RoomTask, id=pk) 
-    
+    task = get_object_or_404(RoomTask, id=pk)
+
     context = {
         "task": task,
     }
     return render(request, "rooms/room_task.html", context)
-
